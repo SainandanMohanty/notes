@@ -23,8 +23,6 @@ public class EditActivity extends AppCompatActivity {
         position = intent.getIntExtra("position", -1);
         if (position != -1) {
             editText.setText(MainActivity.arrayList.get(position));
-        } else {
-            finish();
         }
 
         editText.setSelection(editText.getText().length());
@@ -36,7 +34,14 @@ public class EditActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        MainActivity.arrayList.set(position, editText.getText().toString());
+        String text = editText.getText().toString();
+        if (!text.equals("")) {
+            if (position == -1) {
+                MainActivity.arrayList.add(text);
+            } else {
+                MainActivity.arrayList.set(position, text);
+            }
+        }
         super.onBackPressed();
     }
 }

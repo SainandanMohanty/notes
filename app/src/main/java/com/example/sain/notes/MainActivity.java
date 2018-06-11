@@ -1,6 +1,8 @@
 package com.example.sain.notes;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,13 +17,19 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    static ArrayList<String> arrayList = new ArrayList<>();
+    static ArrayList<String> arrayList;
+    SharedPreferences sharedPreferences;
     ArrayAdapter<String> arrayAdapter;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferences = this.getSharedPreferences("com.example.sain.notes", Context.MODE_PRIVATE);
+        arrayList = (ArrayList<String>) ObjectSerializer.deserialize(
+                sharedPreferences.getString("notes", ObjectSerializer.serialize(new ArrayList<>())));
 
         if (arrayList.isEmpty()) {
             arrayList.add("Example Note...");
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         arrayAdapter.notifyDataSetChanged();
+        sharedPreferences.edit().putString("notes", ObjectSerializer.serialize(arrayList)).apply();
     }
 
     @Override
